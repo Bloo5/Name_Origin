@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -58,17 +59,18 @@ def predict(nome):
   origins = []
 
   for value, index in zip(topv[0], topi[0]):
-    origins.append(categorias[index])
+    obj = {
+      'categoria': categorias[index],
+      'value': value.item()
+    }
+    origins.append(obj)
 
   return origins
 
 app = Flask(__name__)
+CORS(app)
 
-@app.route('/')
-def home():
-    return 'Ola Mundo'
-
-@app.route('/teste/<val>')
+@app.route('/model/<val>')
 def previsao(val):
   return predict(val)
 
